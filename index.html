@@ -37,17 +37,33 @@
     }
 
     .display {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
         background: #181F32;
-        padding: 24px;
+        padding: 12px;
         border-radius: 8px;
         color: #fff;
         font-weight: 700;
         box-shadow: 0px 4px 4px 0px #00000040;
         font-family: "Inter", sans-serif;
+        width: 180px;
+        max-height: 80px;
+        align-items: center;
+        justify-content: flex-end;
+        overflow: scroll;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        scrollbar-width: none;
 
+    }
+
+    .display::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+    }
+
+    #output {
+        white-space: pre-wrap;
+        word-break: break-all;
+        text-align: right;
     }
 
     .keypad {
@@ -152,10 +168,36 @@
         let input = '';
         const outputText = document.getElementById('output');
         const handleInput = (value) => {
-            input += value;
-            updateOutput();
+            if (!input) {
+                (value === 'x' || value === '/') ? '' : input += value
+            } else {
+                const checkOPerand = value === '.' || value === '/' || value === 'x' || value === '+' || value === '-'
+                const checkInputOperand = input.slice(-1) === '.' || input.slice(-1) === '/' || input.slice(-1) === 'x' || input.slice(-1) === '+' || input.slice(-1) === '-'
+                switch (value) {
+                    case '.':
+                        input.slice(-1) === '.' ? "" : checkOPerand && checkInputOperand ? "" : input += value
+                        break
+                    case 'x':
+                        input.slice(-1) === '*' ? "" : checkOPerand && checkInputOperand ? "" : input += value
+                        break
+                    case '/':
+                        input.slice(-1) === '/' ? "" : checkOPerand && checkInputOperand ? "" : input += value
+                        break
+                    case '+':
+                        input.slice(-1) === '+' ? "" : checkOPerand && checkInputOperand ? "" : input += value
+                        break
+                    case '-':
+                        input.slice(-1) === '-' ? "" : checkOPerand && checkInputOperand ? "" : input += value
+                        break
+                    default:
+                        input += value
+                }
+            }
+
+            handleOutput();
         }
-        const updateOutput = () => {
+        console.log(input.slice(0, -1));
+        const handleOutput = () => {
             if (!input) {
                 outputText.innerText = '0';
             }
@@ -168,15 +210,15 @@
             input = input.replace(/x/g, "*")
             const result = eval(input);
             input = result.toString();
-            updateOutput();
+            handleOutput();
         }
         const handleClearInput = () => {
             input = '';
-            updateOutput();
+            handleOutput();
         }
         const handleDel = () => {
             input = input.slice(0, -1)
-            updateOutput()
+            handleOutput()
         }
     </script>
 </body>
